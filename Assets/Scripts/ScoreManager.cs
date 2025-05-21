@@ -41,7 +41,7 @@ public class ScoreManager : MonoBehaviour
 
     void UpdateScoreboard()
     {
-        string display = "";
+        /*string display = "";
         int score = 0;
         int i = 0;
 
@@ -68,6 +68,12 @@ public class ScoreManager : MonoBehaviour
         }
 
         if (scoreboardText != null)
-            scoreboardText.text = display;
+            scoreboardText.text = display;*/
+        if (scoreboardText != null)
+        {
+            scoreboardText.text = "Frame updated!";
+        }
+        else
+        { Debug.LogWarning("ScoreboardText is not assigned"); }
     }
 }

@@ -10,6 +10,7 @@ public class EndTrigger : MonoBehaviour
     {
         if (other.CompareTag("BowlingBall"))
         {
+            Debug.Log("Ball entred the end zone");
             pinManager.EvaluatePins();
         }
     }
