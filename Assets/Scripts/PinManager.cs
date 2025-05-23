@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 //using UnityEditor.Presets;
 using UnityEngine;
@@ -24,15 +24,28 @@ public class PinManager : MonoBehaviour
 
     public void EvaluatePins()
     {
-        int fallenPins = 0;
+        int uprightPins = 0;
+
         foreach (var pin in pins)
         {
-            if (Vector3.Dot(pin.transform.up, Vector3.up) < 0.5f)
+            float angle = Vector3.Angle(pin.transform.up, Vector3.up);
+            if (angle < 5f) // Still standing
             {
-                fallenPins++;
+                uprightPins++;
             }
         }
 
-        scoreManager.RegisterThrow(fallenPins);
+        int fallenPins = pins.Count - uprightPins;
+
+        Debug.Log($"EvaluatePins() → Fallen pins: {fallenPins}");
+
+        if (scoreManager != null)
+        {
+            scoreManager.RegisterThrow(fallenPins);
+        }
+        else
+        {
+            Debug.LogWarning("scoreManager is not assigned!");
+        }
     }
 }

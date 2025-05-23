@@ -14,6 +14,20 @@ public class ScoreManager : MonoBehaviour
     private int[] frameThrows = new int[21]; 
     private int throwIndex = 0;
 
+    void Start()
+    {
+        if (scoreboardText != null)
+        {
+            scoreboardText.text = "Testing";
+        
+            Debug.Log("ScoreboardText updated in Start()");
+        }
+        else
+        {
+            Debug.LogWarning("ScoreboardText is not assigned.");
+        }
+    }
+
     public void RegisterThrow(int fallenPins)
     {
         frameThrows[throwIndex++] = fallenPins;
@@ -41,39 +55,53 @@ public class ScoreManager : MonoBehaviour
 
     void UpdateScoreboard()
     {
-        /*string display = "";
+        if (scoreboardText == null)
+        {
+            Debug.LogWarning("ScoreboardText is not assigned.");
+            return;
+        }
+        string display = "";
         int score = 0;
-        int i = 0;
+        int throwPos = 0;
 
         for (int frame = 0; frame < currentFrame && frame < 10; frame++)
         {
-            if (frameThrows[i] == 10)
+            if (throwPos >= throwIndex)
             {
-                score += 10 + frameThrows[i + 1] + frameThrows[i + 2];
-                display += $"Frame {frame + 1}: Strike ({score})\n";
-                i += 1;
+                display += $"Frame {frame + 1}: Pending...\n";
+                break;
             }
-            else if (frameThrows[i] + frameThrows[i + 1] == 10)
+
+            int first = frameThrows[throwPos];
+            int second = (throwPos + 1 < throwIndex) ? frameThrows[throwPos + 1] : 0;
+            int third = (throwPos + 2 < throwIndex) ? frameThrows[throwPos + 2] : 0;
+
+            if (first == 10)
             {
-                score += 10 + frameThrows[i + 2];
+                score += 10 + second + third;
+                display += $"Frame {frame + 1}: Strike ({score})\n";
+                throwPos += 1;
+            }
+            else if (first + second == 10)
+            {
+                score += 10 + third;
                 display += $"Frame {frame + 1}: Spare ({score})\n";
-                i += 2;
+                throwPos += 2;
             }
             else
             {
-                score += frameThrows[i] + frameThrows[i + 1];
-                display += $"Frame {frame + 1}: {frameThrows[i]} + {frameThrows[i + 1]} = {score}\n";
-                i += 2;
+                score += first + second;
+                display += $"Frame {frame + 1}: {first} + {second} = {score}\n";
+                throwPos += 2;
             }
         }
 
-        if (scoreboardText != null)
-            scoreboardText.text = display;*/
-        if (scoreboardText != null)
+        if (string.IsNullOrWhiteSpace(display))
         {
-            scoreboardText.text = "Frame updated!";
+            display = "Waiting for throws...";
         }
-        else
-        { Debug.LogWarning("ScoreboardText is not assigned"); }
+
+        scoreboardText.text = display;
+        Debug.Log("Updated scoreboard with:\n" + display);
     }
 }
