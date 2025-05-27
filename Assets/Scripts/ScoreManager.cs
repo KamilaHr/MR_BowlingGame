@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
@@ -6,48 +6,52 @@ using TMPro;
 
 public class ScoreManager : MonoBehaviour
 {
-    public int[] scores = new int[10]; 
-    public int currentFrame = 0; 
-    public int throwInFrame = 0; 
+    public Frame currentFrame;
     public TMP_Text scoreboardText;
 
-    private int[] frameThrows = new int[21]; 
-    private int throwIndex = 0;
+    private List<Frame> frames = new List<Frame>();
+    private int frameIndex = 0;
 
     void Start()
     {
-        if (scoreboardText != null)
+        frames.Clear();
+        for(int i = 0; i < 10; i++)
         {
-            scoreboardText.text = "Testing";
-        
-            Debug.Log("ScoreboardText updated in Start()");
+            var f = new Frame();
+            f.isTenthFrame = (i == 9);
+            frames.Add(f);
         }
-        else
-        {
-            Debug.LogWarning("ScoreboardText is not assigned.");
-        }
+        currentFrame = frames[0];
     }
 
-    public void RegisterThrow(int fallenPins)
+    void ResetPins()
     {
-        frameThrows[throwIndex++] = fallenPins;
+        FindObjectOfType<PinManager>().ResetPins();
+    }
 
-        if (throwInFrame == 0)
+    public void RegisterThrow(int pinsKnocked)
+    {
+        if(frameIndex >= frames.Count) { scoreboardText.text = "Game Over!"; return; }
+
+        if (currentFrame.firstThrow == -1)
         {
-            if (fallenPins == 10) // Strike
-            {
-                currentFrame++;
-                throwInFrame = 0;
-            }
-            else
-            {
-                throwInFrame = 1;
-            }
+            currentFrame.firstThrow = pinsKnocked;
         }
-        else
+        else if (currentFrame.secondThrow == -1)
         {
-            currentFrame++;
-            throwInFrame = 0;
+            currentFrame.secondThrow = pinsKnocked;
+        }
+        else if (currentFrame.isTenthFrame && currentFrame.thirdThrow == -1)
+        {
+            currentFrame.thirdThrow = pinsKnocked;
+        }
+
+        if (currentFrame.isComplete)
+        {
+            frameIndex++;
+            if (frameIndex < frames.Count)
+                currentFrame = frames[frameIndex];
+            Invoke(nameof(ResetPins), 2f);
         }
 
         UpdateScoreboard();
@@ -55,53 +59,55 @@ public class ScoreManager : MonoBehaviour
 
     void UpdateScoreboard()
     {
-        if (scoreboardText == null)
+        string display = ""; 
+        int totalScore = 0;
+
+        for (int i = 0; i < frames.Count; i++)
         {
-            Debug.LogWarning("ScoreboardText is not assigned.");
-            return;
-        }
-        string display = "";
-        int score = 0;
-        int throwPos = 0;
+            var f = frames[i];
+            Frame next1 = (i + 1 < frames.Count) ? frames[i + 1] : null;
+            Frame next2 = (i + 2 < frames.Count) ? frames[i + 2] : null;
 
-        for (int frame = 0; frame < currentFrame && frame < 10; frame++)
-        {
-            if (throwPos >= throwIndex)
+            int frameScore = f.GetScore(next1, next2);
+            totalScore += frameScore;
+
+            display += $"Frame {i + 1}: ";
+
+            if (f.firstThrow == -1)
             {
-                display += $"Frame {frame + 1}: Pending...\n";
-                break;
+                display += "--";
             }
-
-            int first = frameThrows[throwPos];
-            int second = (throwPos + 1 < throwIndex) ? frameThrows[throwPos + 1] : 0;
-            int third = (throwPos + 2 < throwIndex) ? frameThrows[throwPos + 2] : 0;
-
-            if (first == 10)
+            else if (f.isStrike)
             {
-                score += 10 + second + third;
-                display += $"Frame {frame + 1}: Strike ({score})\n";
-                throwPos += 1;
-            }
-            else if (first + second == 10)
-            {
-                score += 10 + third;
-                display += $"Frame {frame + 1}: Spare ({score})\n";
-                throwPos += 2;
+                display += "X";
             }
             else
             {
-                score += first + second;
-                display += $"Frame {frame + 1}: {first} + {second} = {score}\n";
-                throwPos += 2;
+                display += f.firstThrow.ToString();
             }
+
+            if (f.secondThrow == -1)
+            {
+                display += " - ";
+            }
+            else if (f.isSpare)
+            {
+                display += " / ";
+            }
+            else
+            {
+                display += " " + f.secondThrow;
+            }
+
+            if (f.isTenthFrame && f.thirdThrow != -1)
+            {
+                display += " + " + f.thirdThrow;
+            }
+
+            display += $" = {totalScore}\n";
         }
 
-        if (string.IsNullOrWhiteSpace(display))
-        {
-            display = "Waiting for throws...";
-        }
-
-        scoreboardText.text = display;
-        Debug.Log("Updated scoreboard with:\n" + display);
+        if (scoreboardText != null)
+            scoreboardText.text = display;
     }
 }

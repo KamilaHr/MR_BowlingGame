@@ -12,15 +12,39 @@ public class PinManager : MonoBehaviour
 
     public ScoreManager scoreManager;
 
+    public GameObject bowlingBall;
+    public Transform ballStartPoint;
+
     public void ResetPins()
     {
         foreach (var pin in pins)
         {
+            pin.SetActive(false);
+            pin.transform.position = pin.GetComponent<PinReset>().initialPosition; 
+            pin.transform.rotation = pin.GetComponent<PinReset>().initialRotation;
+
+            Rigidbody rb = pin.GetComponent<Rigidbody>();
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.Sleep();
+
             pin.SetActive(true);
-            pin.transform.rotation = Quaternion.identity;
-            pin.transform.position = pin.GetComponent<PinReset>().initialPosition;
         }
+
+        // Reset the ball
+        if (bowlingBall != null && ballStartPoint != null)
+        {
+            bowlingBall.transform.position = ballStartPoint.position;
+            bowlingBall.transform.rotation = ballStartPoint.rotation;
+
+            var rb = bowlingBall.GetComponent<Rigidbody>();
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+
+            bowlingBall.SetActive(true);
+        
     }
+}
 
     public void EvaluatePins()
     {
