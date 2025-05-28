@@ -13,13 +13,14 @@ public class ThrowHandler : MonoBehaviour
         {
             throwInProgress = true;
             Debug.Log("Ball thrown!");
-            Invoke(nameof(EvaluatePins), 3f);
+            pinManager.StartEvaluationAfterThrow();
+            StartCoroutine(DisableBallAfter(4f));
         }
     }
 
-    void EvaluatePins()
+    private IEnumerator DisableBallAfter(float seconds)
     {
-        pinManager.EvaluatePins(); 
+        yield return new WaitForSeconds(seconds);
         gameObject.SetActive(false);
         throwInProgress = false;
     }

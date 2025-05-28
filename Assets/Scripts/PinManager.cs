@@ -14,6 +14,7 @@ public class PinManager : MonoBehaviour
 
     public GameObject bowlingBall;
     public Transform ballStartPoint;
+    private bool throwInProgress = false;
 
     public void ResetPins()
     {
@@ -42,9 +43,56 @@ public class PinManager : MonoBehaviour
             rb.angularVelocity = Vector3.zero;
 
             bowlingBall.SetActive(true);
-        
+        }
     }
-}
+
+    public void StartEvaluationAfterThrow()
+    {
+        StartCoroutine(WaitForPinsToSettle());
+    }
+
+    private IEnumerator WaitForPinsToSettle()
+    {
+        yield return new WaitForSeconds(1.5f);
+
+        float settleTime = 0f;
+        const float settleThreshold = 0.1f; // how still pins must be
+        const float waitTime = 2.0f; // total time to wait before checking again
+
+        while (true)
+        {
+            bool allStill = true;
+
+            foreach (var pin in pins)
+            {
+                if (pin == null) continue;
+
+                Rigidbody rb = pin.GetComponent<Rigidbody>();
+                if (rb == null || !rb.IsSleeping())
+                {
+                    allStill = false;
+                    break;
+                }
+            }
+
+            if (allStill)
+            {
+                break; // pins are settled
+            }
+
+            yield return new WaitForSeconds(waitTime);
+            settleTime += waitTime;
+
+            if (settleTime > 10f) // fallback
+            {
+                Debug.LogWarning("Pins didn’t settle in time. Scoring anyway.");
+                break;
+            }
+        }
+
+        EvaluatePins(); // Only evaluate after all pins are still
+    }
+
 
     public void EvaluatePins()
     {
