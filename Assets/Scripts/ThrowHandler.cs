@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ThrowHandler : MonoBehaviour
 {
-    public PinManager pinManager; 
+    public PinManager pinManager;
     private bool throwInProgress = false;
 
     private void OnCollisionEnter(Collision collision)

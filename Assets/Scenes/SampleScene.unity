@@ -8600,7 +8600,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &773190230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8614,7 +8614,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SpawnOnStart: 1
-  MeshMaterial: {fileID: 2100000, guid: 5ed6bf1627d87f2429adcd5d397f8319, type: 2}
+  MeshMaterial: {fileID: 0}
   Colliders: 1
   CutHoles: 0
   castShadows: 1
@@ -17728,10 +17728,7 @@ MonoBehaviour:
   - {fileID: 1435625266}
   - {fileID: 617997717}
   - {fileID: 1287670534}
-  currentFrame: 1
-  throwCount: 0
-  scoreManager: {fileID: 42537629}
-  bowlingBall: {fileID: 0}
+  bowlingBall: {fileID: 1910341590}
   ballStartPoint: {fileID: 773190233}
 --- !u!4 &1591864570
 Transform:
@@ -20884,6 +20881,12 @@ Transform:
   m_Children: []
   m_Father: {fileID: 337549308}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1910341590 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 89413988332077459, guid: c2490dfc3c8ce904983ce01769b0b8f8,
+    type: 3}
+  m_PrefabInstance: {fileID: 7276386636813918767}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1916733019
 GameObject:
   m_ObjectHideFlags: 0
@@ -21249,7 +21252,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1964602098
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23851,7 +23854,7 @@ PrefabInstance:
     - target: {fileID: 1954095384584832164, guid: c2490dfc3c8ce904983ce01769b0b8f8,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2725305009473445881, guid: c2490dfc3c8ce904983ce01769b0b8f8,
         type: 3}
@@ -23881,6 +23884,11 @@ PrefabInstance:
     - target: {fileID: 7426041789031657114, guid: c2490dfc3c8ce904983ce01769b0b8f8,
         type: 3}
       propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8613890508312332757, guid: c2490dfc3c8ce904983ce01769b0b8f8,
+        type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8668544506138520480, guid: c2490dfc3c8ce904983ce01769b0b8f8,
